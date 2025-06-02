@@ -24,9 +24,9 @@ class PhoneNumbersJobServiceUser(HttpUser):
 
     def on_start(self):
         # Load data from CSV file
-        self.test_data = load_test_data("job_load_data.csv")
+        #self.test_data = load_test_data("job_load_data.csv")
         # Loading data from variable / json.
-        #self.test_data = load_test_data_fromjson()
+        self.test_data = load_test_data_fromjson()
 
     @task
     def create_test_capabilities(self):
