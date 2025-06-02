@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hopper : Test Scripts Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+</head>
+<body class="container mt-5">
+
+<div id="scriptsSection">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Hopper : Test Scripts Management</h1>
+        <div>
+            <button id="addScriptBtn" class="btn btn-primary">Add Script</button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="teamFilter" class="form-label">Filter by Team</label>
+                <select id="teamFilter" class="form-select">
+                    <option value="">All Teams</option>
+                </select>
+            </div>
+            <table id="scriptsTable" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Test Name</th>
+                    <th>File Name</th>
+                    <th>Team</th>
+                    <th>Service</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="runHistorySection" style="display: none;">
+    <h2>Run History</h2>
+    <button id="backToScriptsBtn" class="btn btn-secondary mb-3">Back to Scripts</button>
+    <button id="newRunBtn" class="btn btn-primary mb-3">New Run</button>
+    <div class="card">
+        <div class="card-body">
+            <table id="runHistoryTable" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Script Name</th>
+                    <th>File Name</th>
+                    <th>Port</th>
+                    <th>Environment</th>
+                    <th>Status</th>
+                    <th>Started At</th>
+                    <th>Completed At</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- New Run Modal -->
+<div class="modal fade" id="newRunModal" tabindex="-1" aria-labelledby="newRunModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="newRunForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newRunModalLabel">Start New Run</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="users" class="form-label">Users</label>
+                    <input type="number" id="users" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="spawnRate" class="form-label">Spawn Rate</label>
+                    <input type="number" id="spawnRate" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="env" class="form-label" >Environment</label>
+                    <input type="text" id="env" class="form-control" placeholder="e.g., dev, prod , stage" required>
+                </div>
+                <div class="mb-3">
+                    <label for="runTime" class="form-label">Run Time</label>
+                    <input type="text" id="runTime" class="form-control" placeholder="e.g., 1m, 10s">
+                </div>
+                <div class="mb-3">
+                    <label for="webPort" class="form-label">Web Port</label>
+                    <input type="number" id="webPort" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Start Run</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Script Modal -->
+<div class="modal fade" id="addScriptModal" tabindex="-1" aria-labelledby="addScriptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addScriptModalLabel">Add Script</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addScriptForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="addScriptName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="addScriptName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addScriptDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="addScriptDescription" name="description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addScriptTeam" class="form-label">Team</label>
+                        <select class="form-select" id="addScriptTeam" name="team_id">
+                            <option value="" disabled selected>Select Team</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addScriptService" class="form-label">Service</label>
+                        <select class="form-select" id="addScriptService" name="service_id">
+                            <option value="" disabled selected>Select Service</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addScriptFile" class="form-label">Script File</label>
+                        <input type="file" class="form-control" id="addScriptFile" name="file" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Script</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View/Update Script Modal -->
+<div class="modal fade" id="scriptModal" tabindex="-1" aria-labelledby="scriptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scriptModalLabel">View Script</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="scriptForm">
+                <div class="modal-body">
+
+                    <input type="hidden" name="id">
+                    <div class="mb-3">
+                        <label for="scriptName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="scriptName" name="name" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="scriptDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="scriptDescription" name="description" readonly></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="scriptTeam" class="form-label">Team</label>
+                        <select class="form-select" id="scriptTeam" name="team_id" disabled></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="scriptService" class="form-label">Service</label>
+                        <select class="form-select" id="scriptService" name="service_id" disabled></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="scriptFileLink" class="form-label">Script File</label>
+                        <a id="scriptFileLink" href="#" target="_blank" class="form-control-plaintext text-primary">View
+                            Script File</a>
+                        <input type="file" id="scriptFileInput" name="script_file" class="form-control"
+                               style="display: none;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="updateScriptBtn">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/static/script.js" defer></script>
+</body>
+</html>
