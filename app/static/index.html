@@ -17,6 +17,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Hopper : Test Scripts Management</h1>
         <div>
+            <button id="showRunningTestsBtn" class="btn btn-info">Running Tests</button>
             <button id="addScriptBtn" class="btn btn-primary">Add Script</button>
         </div>
     </div>
@@ -65,6 +66,32 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="runningTestsSection" style="display: none;">
+    <h2>Currently Running Tests</h2>
+    <button id="backToScriptsFromRunningTestsBtn" class="btn btn-secondary mb-3">Back to Scripts</button>
+    <div class="card">
+        <div class="card-body">
+            <table id="runningTestsTable" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Script Name</th>
+                    <th>File Name</th>
+                    <th>Port</th>
+                    <th>Environment</th>
+                    <th>Status</th>
+                    <th>Started At</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Populate with running tests data -->
+                </tbody>
             </table>
         </div>
     </div>

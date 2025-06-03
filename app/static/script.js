@@ -1,6 +1,75 @@
 $(document).ready(function () {
 
+    document.getElementById("showRunningTestsBtn").addEventListener("click", () => {
+        document.getElementById("scriptsSection").style.display = "none";
+        document.getElementById("runningTestsSection").style.display = "block";
+    });
+
+    document.getElementById("backToScriptsFromRunningTestsBtn").addEventListener("click", () => {
+        document.getElementById("runningTestsSection").style.display = "none";
+        document.getElementById("scriptsSection").style.display = "block";
+    });
+
+
     let currentScriptId = 1;
+
+    const runningTestsTable = $('#runningTestsTable').DataTable({
+        ajax: {
+            url: '/runs/currently-running', // Replace with the correct endpoint
+            dataSrc: '' // Adjust based on the API response structure
+        },
+        columns: [
+            {data: null, render: (data, type, row, meta) => meta.row + 1}, // Row number
+            {data: 'script_name', defaultContent: 'N/A'}, // Script Name
+            {data: 'filename', defaultContent: 'N/A'}, // File Name
+            {data: 'web_port', defaultContent: 'N/A'}, // Port
+            {data: 'env', defaultContent: 'N/A'}, // Environment
+            {data: 'status', defaultContent: 'N/A'}, // Status
+            {data: 'started_at', defaultContent: 'N/A'}, // Start time
+            {
+                data: null,
+                render: (data) => `
+                <button class="btn btn-danger btn-sm stop-run-btn" data-id="${data.id}">Stop Run</button>
+                <a href="http://${window.location.hostname}:${data.web_port}" target="_blank" class="btn btn-primary btn-sm">Locust UI</a>
+            `
+            } // Actions column
+        ],
+        order: [[6, 'desc']],
+        autoWidth: false,
+        paging: true,
+        searching: true,
+        ordering: true,
+        dom: "<'row'<'col-sm-12'f>>" + // Search box
+            "<'row'<'col-sm-12'tr>>" + // Table
+            "<'row'<'col-sm-4'l><'col-sm-4'i><'col-sm-4'p>>", // Info and pagination
+        lengthMenu: [10, 25, 50, 100],
+        language: {
+            lengthMenu: "Show _MENU_ entries"
+        }
+    });
+
+    // Handle Stop Run button
+    $('#runningTestsTable').on('click', '.stop-run-btn', function () {
+        const runId = $(this).data('id');
+        if (confirm('Are you sure you want to stop this run?')) {
+            const loader = document.createElement('div');
+            loader.className = 'position-fixed top-50 start-50 translate-middle';
+            loader.innerHTML = `
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        `;
+            document.body.appendChild(loader);
+            $.post(`/runs/stop-test/${runId}`, function () {
+                alert('Test run stopped successfully!');
+                runningTestsTable.ajax.reload();
+            }).fail(function () {
+                alert('Failed to stop test run.');
+            }).always(function () {
+                loader.remove();
+            });
+        }
+    });
 
     const runHistoryTable = $('#runHistoryTable').DataTable({
         ajax: {

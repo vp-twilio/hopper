@@ -61,6 +61,37 @@ def list_test_runs(db: Session = Depends(get_db)):
     return db.query(models.TestRun).all()
 
 
+@router.get("/currently-running", response_model=list[schemas.TestRun])
+def get_runs_for_script(db: Session = Depends(get_db)):
+    runs = (
+        db.query(
+            models.TestRun,
+            models.Script.name.label("script_name"),
+            models.Script.filename.label("filename"),
+            models.TestRun.env.label("environment"),
+        )
+        .join(models.Script, models.TestRun.script_id == models.Script.id)
+        .filter(models.TestRun.status == "running")
+        .all()
+    )
+    return [
+        schemas.TestRun(
+            id=run.TestRun.id,
+            script_id=run.TestRun.script_id,
+            users=run.TestRun.users,
+            spawn_rate=run.TestRun.spawn_rate,
+            env=run.environment,
+            script_name=run.script_name,
+            filename=run.filename,
+            status=run.TestRun.status,
+            started_at=run.TestRun.started_at.strftime("%d-%m-%y %H:%M") if run.TestRun.started_at else None,
+            completed_at=run.TestRun.completed_at.strftime("%d-%m-%y %H:%M") if run.TestRun.completed_at else None,
+            web_port=run.TestRun.web_port
+        )
+        for run in runs
+    ]
+
+
 @router.get("/{run_id}", response_model=schemas.TestRun)
 def get_test_run(run_id: int, db: Session = Depends(get_db)):
     run = db.query(models.TestRun).filter(models.TestRun.id == run_id).first()
@@ -219,4 +250,3 @@ def download_report(run_id: int, db: Session = Depends(get_db)):
         media_type="text/html",
         headers={"Content-Disposition": f"attachment; filename=report_{run_id}.html"}
     )
-

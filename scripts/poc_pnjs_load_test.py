@@ -36,7 +36,7 @@ class PhoneNumbersJobServiceUser(HttpUser):
             "jobId": job_id,
             "actor": test_payload["actor"],
             "friendlyName": test_payload["friendlyName"],
-            "notifyEmail": "",
+            "notifyEmail": "venkatp@twili.com",
             "dids": test_payload["dids"],
             "status": "1",
             "actions": ["setStatus"]
@@ -61,7 +61,7 @@ class PhoneNumbersJobServiceUser(HttpUser):
             "jobId": job_id,
             "actor": test_payload["actor"],
             "friendlyName": test_payload["friendlyName"],
-            "notifyEmail": "",
+            "notifyEmail": "venkatp@twili.com",
             "changeNkuSidTo": nkuSid,
             "dids": test_payload["dids"],
             "actions": ["changeNku"]
